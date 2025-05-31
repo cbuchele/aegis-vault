@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aegis-vault"
+version = "0.1.0"
+description = "Secure, LGPD-compliant middleware for protecting sensitive data in LLM prompts"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "Apache-2.0"}
+authors = [
+    {name = "Your Name", email = "your.email@example.com"},
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Security",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+    "cryptography>=3.4.7",
+    "spacy>=3.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=6.0",
+    "black>=21.12b0",
+    "isort>=5.10.1",
+    "flake8>=4.0.1",
+    "mypy>=0.910",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/aegis-vault"
+Documentation = "https://github.com/yourusername/aegis-vault#readme"
+Issues = "https://github.com/yourusername/aegis-vault/issues"
+Source = "https://github.com/yourusername/aegis-vault"
+
+[tool.black]
+line-length = 88
+target-version = ["py38"]
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.pytest]
+testpaths = ["tests"]
+addopts = "-v --cov=aegis_vault --cov-report=term-missing"
+
+[metadata]
+license_files = ["LICENSE"]
