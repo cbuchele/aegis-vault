@@ -5,13 +5,13 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="aegis-vault",
-    version="0.1.0",
-    author="Carlos Eduardo",
-    author_email="author@example.com",
+    version="0.1.1",
+    author="cbuchele",
+    author_email="contact@aegisai.com.br",
     description="Secure Prompt Redaction & LGPD Middleware for LLMs",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/username/aegis-vault",
+    url="https://github.com/cbuchele/aegis-vault",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",

@@ -65,38 +65,53 @@ class VaultGPT:
     # Maximum prompt size (500,000 characters)
     MAX_PROMPT_SIZE = 500_000
     
-    def __init__(self, 
-                 encryption_key: Optional[str] = None,
-                 spacy_model: str = "pt_core_news_sm",
-                 use_ner: bool = True,
-                 load_spacy: bool = True):
+    def __init__(
+        self,
+        encryption_key: Optional[str] = None,
+        use_ner: bool = True,
+        load_spacy: bool = True,
+        spacy_model: str = "pt_core_news_sm",
+        system_prompt: Optional[str] = None,
+    ):
         """
-        Initialize the VaultGPT middleware.
-        
+        Initialize the Vault with optional encryption key and NER settings.
+
         Args:
-            encryption_key: Optional custom encryption key
-            spacy_model: Name of the spaCy model to use for NER
-            use_ner: Whether to use NER for detection
-            load_spacy: Whether to load spaCy model on init
+            encryption_key: Optional encryption key. If not provided, a random key will be generated.
+            use_ner: Whether to use spaCy NER for entity recognition.
+            load_spacy: Whether to load the spaCy model on initialization.
+            spacy_model: Name of the spaCy model to use.
+            system_prompt: Optional custom system prompt to instruct the LLM about vault markers.
+                         If None, a default prompt will be used.
         """
+        self.encryption_key = encryption_key or Fernet.generate_key().decode()
+        self.cipher_suite = Fernet(self.encryption_key.encode())
         self.vault = {}
         self.token_counter = 0
-        self.use_ner = use_ner and spacy is not None
-        
-        # Initialize encryption
-        if encryption_key:
-            self.encryption_key = self._derive_key(encryption_key)
-        else:
-            self.encryption_key = Fernet.generate_key()
-        
-        self.cipher = Fernet(self.encryption_key)
-        
-        # Initialize spaCy for NER if requested
+        self.use_ner = use_ner
         self.nlp = None
-        if self.use_ner and load_spacy:
-            self._load_spacy_model(spacy_model)
+        self.spacy_model = spacy_model
+        
+        # System prompt to preserve vault markers in LLM responses
+        self.default_system_prompt = """
+You will receive input containing placeholder markers such as <<VAULT_0>>, <<VAULT_1>>, etc. These markers represent redacted sensitive information.
+
+⚠️ IMPORTANT INSTRUCTIONS:
+
+- DO NOT attempt to guess or replace what any <<VAULT_X>> marker represents.
+- You MAY reference and use these markers in new positions or sentence structures, but you must ALWAYS use the markers exactly as provided (e.g., <<VAULT_0>>).
+- NEVER rename, alter, reformat, paraphrase, or omit any marker.
+- Responses should be coherent and context-aware, but the markers must remain intact and clearly preserved wherever referenced.
+
+These markers will be programmatically replaced after your response. Treat them as untouchable placeholders for confidential content.
+""".strip()
+        
+        self.system_prompt = system_prompt or self.default_system_prompt
+        
+        if use_ner and load_spacy:
+            self._load_spacy_model()
     
-    def _load_spacy_model(self, model_name: str) -> None:
+    def _load_spacy_model(self) -> None:
         """
         Load the specified spaCy model.
         
@@ -104,14 +119,14 @@ class VaultGPT:
             model_name: Name of the spaCy model to load
         """
         try:
-            self.nlp = spacy.load(model_name)
-            logging.info(f"Loaded spaCy model: {model_name}")
+            self.nlp = spacy.load(self.spacy_model)
+            logging.info(f"Loaded spaCy model: {self.spacy_model}")
         except OSError:
-            logging.warning(f"Model {model_name} not found. Downloading...")
+            logging.warning(f"Model {self.spacy_model} not found. Downloading...")
             try:
-                os.system(f"python -m spacy download {model_name}")
-                self.nlp = spacy.load(model_name)
-                logging.info(f"Downloaded and loaded spaCy model: {model_name}")
+                os.system(f"python -m spacy download {self.spacy_model}")
+                self.nlp = spacy.load(self.spacy_model)
+                logging.info(f"Downloaded and loaded spaCy model: {self.spacy_model}")
             except Exception as e:
                 logging.error(f"Failed to download spaCy model: {e}")
                 self.use_ner = False
@@ -146,7 +161,7 @@ class VaultGPT:
         Returns:
             str: Encrypted text (base64)
         """
-        encrypted = self.cipher.encrypt(text.encode())
+        encrypted = self.cipher_suite.encrypt(text.encode())
         return encrypted.decode()
     
     def _decrypt(self, encrypted_text: str) -> str:
@@ -159,7 +174,7 @@ class VaultGPT:
         Returns:
             str: Decrypted text
         """
-        decrypted = self.cipher.decrypt(encrypted_text.encode())
+        decrypted = self.cipher_suite.decrypt(encrypted_text.encode())
         return decrypted.decode()
     
     def _detect_regex_pii(self, text: str) -> List[Tuple[str, str, int, int]]:
@@ -323,28 +338,71 @@ class VaultGPT:
         
         return restored
     
-    def secure_chat(self, prompt: str, llm_callable: Callable[[str], str]) -> str:
+    def get_system_prompt(self) -> str:
         """
-        Process a prompt securely through an LLM.
+        Get the system prompt that should be sent to the LLM.
+        
+        Returns:
+            str: The system prompt to preserve vault markers
+        """
+        return self.system_prompt
+    
+    def set_system_prompt(self, prompt: Optional[str] = None) -> None:
+        """
+        Set a custom system prompt or reset to default.
         
         Args:
-            prompt: User prompt
-            llm_callable: Function to call LLM with redacted prompt
-            
-        Returns:
-            str: LLM response with sensitive data restored
+            prompt: Custom system prompt. If None, resets to default.
         """
-        # Check for malicious content
-        if self._looks_malicious(prompt):
-            return "This prompt was blocked for security reasons."
-        
+        self.system_prompt = prompt or self.default_system_prompt
+    
+    def secure_chat(
+        self, 
+        prompt: str, 
+        llm_function: Callable[[str], str],
+        include_system_prompt: bool = True,
+        **llm_kwargs
+    ) -> str:
+        """
+        Process a prompt through the LLM while protecting sensitive data.
+
+        Args:
+            prompt: The user's input prompt
+            llm_function: A function that takes a string and returns the LLM's response.
+                         For chat models, this function should handle system prompts.
+            include_system_prompt: Whether to include the system prompt (default: True).
+                                Set to False if you're handling system prompts manually.
+            **llm_kwargs: Additional arguments to pass to the LLM function.
+
+        Returns:
+            The LLM's response with sensitive data restored
+            
+        Example with OpenAI's chat completion:
+            ```python
+            def openai_chat(prompt):
+                response = openai.ChatCompletion.create(
+                    model="gpt-3.5-turbo",
+                    messages=[
+                        {"role": "system", "content": vault.get_system_prompt()},
+                        {"role": "user", "content": prompt}
+                    ]
+                )
+                return response.choices[0].message['content']
+                
+            response = vault.secure_chat("My SSN is 123-45-6789", openai_chat)
+            ```
+        """
         # Redact sensitive information
         redacted_prompt = self.redact_prompt(prompt)
         
-        # Call LLM with redacted prompt
-        llm_response = llm_callable(redacted_prompt)
+        # Include system prompt if needed (for chat models)
+        if include_system_prompt and hasattr(llm_function, '__code__') and 'system_prompt' in llm_function.__code__.co_varnames:
+            llm_kwargs['system_prompt'] = self.system_prompt
         
-        # Restore any vault tokens in the response
+        # Get LLM response
+        llm_response = llm_function(redacted_prompt, **llm_kwargs)
+        
+        # Restore original content in the response
         restored_response = self.restore_content(llm_response)
         
         return restored_response

@@ -42,6 +42,48 @@ pip install 'aegis-vault[dev]'
 
 ## 🚀 Quick Start
 
+### Basic Usage with System Prompts
+
+When integrating with LLMs, it's crucial to include a system prompt that instructs the model to preserve vault markers. Here's how to do it:
+
+```python
+from aegis_vault import VaultGPT
+
+# Initialize with a custom system prompt
+vault = VaultGPT(
+    encryption_key="your-secure-key",
+    system_prompt="""
+    You are processing text with sensitive information.
+    
+    IMPORTANT: Preserve all <<VAULT_X>> markers exactly as they appear.
+    Never modify, remove, or reorder these markers in your responses.
+    """.strip()
+)
+
+def query_llm(prompt, system_prompt=None):
+    """Example function to call an LLM API"""
+    # In a real implementation, you would call your LLM API here
+    # For example, with OpenAI:
+    # response = openai.ChatCompletion.create(
+    #     model="gpt-3.5-turbo",
+    #     messages=[
+    #         {"role": "system", "content": system_prompt or ""},
+    #         {"role": "user", "content": prompt}
+    #     ]
+    # )
+    # return response.choices[0].message['content']
+    
+    # For demonstration, just return a mock response
+    return f"Processed your request. Detected sensitive data: {prompt}"
+
+# The secure_chat method will automatically handle redaction and restoration
+response = vault.secure_chat(
+    "My email is user@example.com and my SSN is 123-45-6789",
+    query_llm
+)
+print(response)
+```
+
 ### Basic Usage
 
 ```python
@@ -87,6 +129,35 @@ print(f"Restored: {restored}")
 ```
 
 ## 📚 Usage Guide
+
+### System Prompt Best Practices
+
+When working with LLMs, it's important to include clear instructions about handling vault markers. Here's a recommended approach:
+
+1. **Be Explicit**: Clearly state that the markers (`<<VAULT_X>>`) are special and must be preserved
+2. **Provide Clear Rules**: Give specific instructions about not modifying, removing, or reordering the markers
+3. **Include Examples**: Show examples of correct and incorrect behavior
+4. **Make it Stand Out**: Use formatting (like ALL CAPS or emojis) to draw attention to these instructions
+
+Example system prompt:
+
+```python
+system_prompt = """
+You are a helpful assistant that processes text containing sensitive information.
+
+IMPORTANT: The user's message may contain special markers like <<VAULT_0>>, <<VAULT_1>>, etc.
+These markers represent redacted sensitive information.
+
+RULES:
+1. NEVER modify, remove, or reorder these markers in your response
+2. Return all markers exactly as they appear in the input
+3. If you need to refer to the redacted content, use the marker itself
+4. Do not try to guess what the markers represent
+5. If unsure, respond with the markers unchanged
+""".strip()
+
+vault = VaultGPT(system_prompt=system_prompt)
+```
 
 ### Initialization Options
 
@@ -159,46 +230,6 @@ new_vault.load_vault_from_file("secure_vault.json")
 - **Customer Support**: Protect customer information in support chatbots
 - **Enterprise**: Maintain LGPD compliance in corporate AI systems
 
-## 🚀 Publishing to PyPI
-
-1. **Update Version**: Bump the version in `aegis_vault/__init__.py`
-
-2. **Build the package**:
-   ```bash
-   pip install --upgrade build twine
-   python -m build
-   ```
-
-3. **Test the build**:
-   ```bash
-   python -m twine upload --repository testpypi dist/*
-   pip install --index-url https://test.pypi.org/simple/ --no-deps aegis-vault
-   ```
-
-4. **Upload to PyPI**:
-   ```bash
-   python -m twine upload dist/*
-   ```
-
-5. **Verify installation**:
-   ```bash
-   pip install aegis-vault
-   python -c "from aegis_vault import VaultGPT; print('Aegis Vault installed successfully!')"
-   ```
-
-## 🛠 Development
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/aegis-vault.git
-cd aegis-vault
-
-# Install development dependencies
-pip install -e ".[dev]"
-
-# Run tests
-python -m pytest
-```
 
 ## 📄 License
 

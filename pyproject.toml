@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aegis-vault"
-version = "0.1.0"
+version = "0.1.1"
 description = "Secure, LGPD-compliant middleware for protecting sensitive data in LLM prompts"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "Apache-2.0"}
 authors = [
-    {name = "Your Name", email = "your.email@example.com"},
+    {name = "cbuchele", email = "contact@aegisai.com.br"},
 ]
 classifiers = [
     "Development Status :: 3 - Alpha",
@@ -39,10 +39,9 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/aegis-vault"
-Documentation = "https://github.com/yourusername/aegis-vault#readme"
-Issues = "https://github.com/yourusername/aegis-vault/issues"
-Source = "https://github.com/yourusername/aegis-vault"
+Homepage = "https://github.com/cbuchele/aegis-vault"
+Documentation = "https://github.com/cbuchele/aegis-vault#readme"
+
 
 [tool.black]
 line-length = 88
