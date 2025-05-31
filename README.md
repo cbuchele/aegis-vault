@@ -1,7 +1,6 @@
+
+
 Aegis Vault 🛡️
-
-
-
 Secure, LGPD-compliant middleware for protecting sensitive data in LLM prompts. Aegis Vault automatically detects, redacts, and encrypts sensitive information before it reaches LLM APIs, ensuring compliance with data protection regulations.
 
 ✨ Features
@@ -130,13 +129,10 @@ Customer Support: Protect customer information in support chatbots
 Enterprise: Maintain LGPD compliance in corporate AI systems
 
 
-
-
-You can find my Linktree here: https://linktr.ee/cbuchele?utm_source=linktree_admin_share
+You can find my Linktree here: https://linktr.ee/cbuchele?utm_source=linktree_admin_share.
 
 About Me & Aegis AI
 
 I'm Carlos, a Full Stack Developer, Offensive Security Specialist, Python Developer, and LLM/AI Specialist. I am the creator of Aegis Vault and the company Aegis AI.
 
-Aegis AI specializes in applying custom LLM model solutions to businesses in the modern world. We create chat assistants for all business sectors, with qualified filters for correct data privacy laws. As a cybersecurity company, we also offer audits to ensure you're in compliance, as well as review your existing code for vulnerabilities or outdated code. Our broader cybersecurity services include professional security audits, penetration testing (including gamified LLM pentesting with our Merlin CTF challenges), security training and certifications, red team operations, code review, hardening, and incident response. We are committed to enhancing digital security and provide open and free access to many of our courses, including our AI-Powered Threat Detection course. Be on the lookout for out upcoming new free courses and trainings!
-
+Aegis AI specializes in applying custom LLM model solutions to businesses in the modern world. We create chat assistants for all business sectors, with qualified filters for correct data privacy laws. As a cybersecurity company, we also offer audits to ensure you're in compliance, as well as review your existing code for vulnerabilities or outdated code. Our broader cybersecurity services include professional security audits, penetration testing (including gamified LLM pentesting with our Merlin CTF challenges), security training and certifications, red team operations, code review, hardening, and incident response. We are committed to enhancing digital security and provide open and free access to many of our courses, including our AI-Powered Threat Detection course. Be on the lookout for our upcoming new free courses and trainings!
