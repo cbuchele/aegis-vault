@@ -1,4 +1,6 @@
+# 🛡️ Aegis Vault
 
+**Secure, LGPD-compliant middleware for protecting sensitive data in LLM prompts.**
 
 Aegis Vault automatically detects, redacts, and encrypts sensitive information before it reaches LLM APIs, ensuring compliance with data protection regulations.
 
@@ -24,39 +26,28 @@ Aegis Vault provides a secure middleware layer between your application and LLMs
 - Securely stores encrypted data in a local vault
 - Restores redacted content in LLM responses
 - Blocks malicious inputs including prompt injection and DoS patterns
+- LGPD-compliant with special focus on Brazilian Portuguese data
 
+---
 
+## 📦 Installation
 
 ```bash
 pip install aegis-vault
 ```
 
+---
 
 ## 🚀 Quick Start
 
-from aegis_vault import VaultGPT
-vault = VaultGPT(
-    encryption_key="your-secure-key",
-    Never modify, remove, or reorder these markers in your responses.
-    """.strip()
-    #         {"role": "system", "content": system_prompt or ""},
-    #         {"role": "user", "content": prompt}
-    #     ]
-    # )
-    # return response.choices[0].message['content']
-    
-    # For demonstration, just return a mock response
-print(response)
-```
 ### Basic Usage
 
 ```python
 from aegis_vault import VaultGPT
 
-# Initialize the vault with default settings
+# Initialize the vault
 vault = VaultGPT()
 
-# Process a prompt securely
 # Define your LLM function
 def my_llm_function(prompt):
     return f"Processed: {prompt}"
