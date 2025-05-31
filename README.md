@@ -34,11 +34,7 @@ Install using pip:
 pip install aegis-vault
 ```
 
-For development with additional tools:
 
-```bash
-pip install 'aegis-vault[dev]'
-```
 
 ## 🚀 Quick Start
 
