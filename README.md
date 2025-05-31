@@ -1,46 +1,35 @@
-# Aegis Vault 🛡️
+Aegis Vault 🛡️
 
-[![PyPI version](https://img.shields.io/pypi/v/aegis-vault.svg)](https://pypi.org/project/aegis-vault/)
-[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![Python Version](https://img.shields.io/pypi/pyversions/aegis-vault.svg)](https://pypi.org/project/aegis-vault/)
+
 
 Secure, LGPD-compliant middleware for protecting sensitive data in LLM prompts. Aegis Vault automatically detects, redacts, and encrypts sensitive information before it reaches LLM APIs, ensuring compliance with data protection regulations.
 
-## ✨ Features
-
-- 🔍 Automatic detection of sensitive data (CPF, CNPJ, emails, etc.)
-- 🔒 Secure encryption of sensitive information
-- 🛡️ Protection against prompt injection and data leaks
-- 🔄 Easy restoration of original content in LLM responses
-- 🚀 Simple integration with any LLM workflow
-- 🇧🇷 Optimized for Brazilian data protection (LGPD)
-
-## 🔐 What It Does
-
+✨ Features
+🔍 Automatic detection of sensitive data (CPF, CNPJ, emails, etc.)
+🔒 Secure encryption of sensitive information
+🛡️ Protection against prompt injection and data leaks
+🔄 Easy restoration of original content in LLM responses
+🚀 Simple integration with any LLM workflow
+🇧🇷 Optimized for Brazilian data protection (LGPD)
+🔐 What It Does
 Aegis Vault provides a secure middleware layer between your application and LLMs:
 
-- **Detects sensitive data** using regex patterns and NER (Named Entity Recognition)
-- **Redacts and encrypts** PII before sending to LLMs
-- **Securely stores** encrypted data in a local vault
-- **Restores redacted content** in LLM responses
-- **Blocks malicious inputs** including prompt injection and DoS patterns
-- **LGPD-compliant** with special focus on Brazilian Portuguese data
-
-## 📦 Installation
-
+Detects sensitive data using regex patterns and NER (Named Entity Recognition)
+Redacts and encrypts PII before sending to LLMs
+Securely stores encrypted data in a local vault
+Restores redacted content in LLM responses
+Blocks malicious inputs including prompt injection and DoS patterns
+LGPD-compliant with special focus on Brazilian Portuguese data
+📦 Installation
 Install using pip:
 
-```bash
+Bash
+
 pip install aegis-vault
-```
+🚀 Quick Start
+Basic Usage
+Python
 
-
-
-## 🚀 Quick Start
-
-### Basic Usage
-
-```python
 from aegis_vault import VaultGPT
 
 # Initialize the vault with default settings
@@ -59,11 +48,9 @@ response = vault.secure_chat(
 
 print(response)
 # Output: Processed: Meu CPF é 123.456.789-00 e meu email é usuario@exemplo.com.br
-```
+Advanced Usage
+Python
 
-### Advanced Usage
-
-```python
 from aegis_vault import VaultGPT
 
 # Initialize with custom encryption key
@@ -80,13 +67,10 @@ print(f"Redacted: {redacted}")
 restored = vault.restore_content(redacted)
 print(f"Restored: {restored}")
 # Output: Restored: Por favor, envie um email para usuario@exemplo.com informando sobre o CPF 123.456.789-00
-```
+📚 Usage Guide
+Initialization Options
+Python
 
-## 📚 Usage Guide
-
-### Initialization Options
-
-```python
 from aegis_vault import VaultGPT
 
 # Basic initialization (auto-generates encryption key)
@@ -102,11 +86,9 @@ vault = VaultGPT(use_ner=False)
 vault = VaultGPT(load_spacy=False)
 # Later, when needed:
 # vault._load_spacy_model("pt_core_news_sm")
-```
+Secure Chat Integration
+Python
 
-### Secure Chat Integration
-
-```python
 def query_llm(prompt):
     """Example function to simulate LLM API call"""
     # In a real scenario, this would call your LLM API
@@ -118,23 +100,18 @@ response = vault.secure_chat(
     query_llm
 )
 print(response)
-```
+Advanced Features
+Custom Patterns
+Python
 
-### Advanced Features
-
-#### Custom Patterns
-
-```python
 # Add custom patterns for sensitive data
 vault.PATTERNS['credit_card'] = r'\b(?:\d[ -]*?){13,16}\b'
 
 # Add custom malicious patterns to block
 vault.MALICIOUS_PATTERNS.append(r'shutdown\s+computer')
-```
+Vault Management
+Python
 
-#### Vault Management
-
-```python
 # Export vault data (can include encryption key if needed)
 json_data = vault.export_vault(include_key=False)  # Don't include key in exports by default
 
@@ -145,57 +122,21 @@ vault.save_vault_to_file("secure_vault.json", include_key=False)
 new_vault = VaultGPT()
 new_vault.load_vault_from_file("secure_vault.json")
 # Note: You'll need to set the encryption key separately if it wasn't included
-```
+💡 Use Cases
+Healthcare: Protect patient data in medical AI applications
+Finance: Secure financial information in banking chatbots
+Legal: Ensure client confidentiality in legal document processing
+Customer Support: Protect customer information in support chatbots
+Enterprise: Maintain LGPD compliance in corporate AI systems
 
-## 💡 Use Cases
 
-- **Healthcare**: Protect patient data in medical AI applications
-- **Finance**: Secure financial information in banking chatbots
-- **Legal**: Ensure client confidentiality in legal document processing
-- **Customer Support**: Protect customer information in support chatbots
-- **Enterprise**: Maintain LGPD compliance in corporate AI systems
 
-## 🚀 Publishing to PyPI
 
-1. **Update Version**: Bump the version in `aegis_vault/__init__.py`
+You can find my Linktree here: https://linktr.ee/cbuchele?utm_source=linktree_admin_share
 
-2. **Build the package**:
-   ```bash
-   pip install --upgrade build twine
-   python -m build
-   ```
+About Me & Aegis AI
 
-3. **Test the build**:
-   ```bash
-   python -m twine upload --repository testpypi dist/*
-   pip install --index-url https://test.pypi.org/simple/ --no-deps aegis-vault
-   ```
+I'm Carlos, a Full Stack Developer, Offensive Security Specialist, Python Developer, and LLM/AI Specialist. I am the creator of Aegis Vault and the company Aegis AI.
 
-4. **Upload to PyPI**:
-   ```bash
-   python -m twine upload dist/*
-   ```
+Aegis AI specializes in applying custom LLM model solutions to businesses in the modern world. We create chat assistants for all business sectors, with qualified filters for correct data privacy laws. As a cybersecurity company, we also offer audits to ensure you're in compliance, as well as review your existing code for vulnerabilities or outdated code. Our broader cybersecurity services include professional security audits, penetration testing (including gamified LLM pentesting with our Merlin CTF challenges), security training and certifications, red team operations, code review, hardening, and incident response. We are committed to enhancing digital security and provide open and free access to many of our courses, including our AI-Powered Threat Detection course. Be on the lookout for out upcoming new free courses and trainings!
 
-5. **Verify installation**:
-   ```bash
-   pip install aegis-vault
-   python -c "from aegis_vault import VaultGPT; print('Aegis Vault installed successfully!')"
-   ```
-
-## 🛠 Development
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/aegis-vault.git
-cd aegis-vault
-
-# Install development dependencies
-pip install -e ".[dev]"
-
-# Run tests
-python -m pytest
-```
-
-## 📄 License
-
-This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
