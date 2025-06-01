@@ -74,7 +74,7 @@ Processed: Meu CPF é 123.456.789-00 e meu email é usuario@exemplo.com.br
 from aegis_vault import VaultGPT
 
 # Initialize with custom encryption key
-vault = VaultGPT(encryption_key="my-secret-key-123")
+vault = VaultGPT(encryption_key="my-secret-key-123") #Fernet encryption key needs to be a 32-byte URL-safe base64-encoded string
 
 # Redact sensitive information
 redacted = vault.redact_prompt(
