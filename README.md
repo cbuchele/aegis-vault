@@ -15,6 +15,8 @@ Aegis Vault automatically detects, redacts, and encrypts sensitive information b
 - 🚀 Simple integration with any LLM workflow
 - 🇧🇷 Optimized for Brazilian data protection (LGPD)
 
+- **upcoming updates ( Add all regex for PII IE credit cards etc )
+
 ---
 
 ## 🔐 What It Does
